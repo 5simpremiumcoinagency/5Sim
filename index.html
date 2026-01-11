@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,7 +53,7 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
 <div id="coinContainer"></div>
 
 <button class="order-btn" onclick="openPay()">Order Now</button>
-<div class="notice">কয়েন ক্রয় করতে উপরের <strong>ORDER NOW</strong>অপশন-এ ক্লিক করুন। দ্রুত সেবা পেতে আমাদের সাথে সরাসরি যোগাযোগ করুন।।</div>
+<div class="notice">কয়েন ক্রয় করতে উপরের <strong>ORDER NOW</strong> অপশন-এ ক্লিক করুন। দ্রুত সেবা পেতে আমাদের সাথে সরাসরি যোগাযোগ করুন।</div>
 
 <button class="btn whatsapp" id="waBtn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
 <button class="btn telegram" id="tgBtn"><i class="fa-brands fa-telegram"></i> Telegram</button>
@@ -71,8 +71,9 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
 <div class="pay-wrap">
 <label>Your Name:</label>
 <input id="pname" class="pay-input" placeholder="Enter full name">
-<div class="pay-note">অনুগ্রহ করে আগে বিকাশ অথবা নগদে আমাদের দেওয়া নাম্বারে সেন্ড মানি করুন
-পেমেন্ট সম্পন্ন হলে আপনার নাম ও যে নাম্বার থেকে টাকা পাঠিয়েছেন সেই নাম্বারের শেষ ৪ সংখ্যা দিয়ে অর্ডার কনফার্ম করুন</div>
+<div class="pay-note">অনুগ্রহ করে আগে বিকাশ অথবা নগদে আমাদের দেওয়া নাম্বারে সেন্ড মানি করুন।  
+পেমেন্ট সম্পন্ন হলে আপনার নাম ও যে নাম্বার থেকে টাকা পাঠিয়েছেন সেই নাম্বারের শেষ ৪ সংখ্যা দিয়ে অর্ডার কনফার্ম করুন।</div>
+
 <b>Select Payment Method:</b>
 <div class="method" data="Bkash">
   <div class="mlogo bkash-logo-bg">bKash</div>
@@ -86,7 +87,7 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
   <div class="mlogo nagad-logo-bg">nagad</div>
   <div class="method-info">
     <b>Nagad</b>
-    <div id="nagadNumber" style="color:#6c63ff;font-weight:600;margin:4px 0;">+88001627234151</div>
+    <div id="nagadNumber" style="color:#6c63ff;font-weight:600;margin:4px 0;">+8801627234151</div>
     <small>যে নাম্বার থেকে টাকা পাঠিয়েছেন, সেই নাম্বারের শেষ ৪ সংখ্যা দিন</small>
   </div>
 </div>
@@ -142,15 +143,15 @@ function loadCoins(){
 // Load payment numbers
 db.ref('paymentNumbers').on('value',snap=>{
   const data=snap.val();
-  document.getElementById('bkashNumber').innerText=data?.bkash||'+8801716698995';
-  document.getElementById('nagadNumber').innerText=data?.nagad||'+8801836951009';
+  document.getElementById('bkashNumber').innerText=data?.bkash||'+8801627234151';
+  document.getElementById('nagadNumber').innerText=data?.nagad||'+8801627234151';
 });
 
 // Load channels
 let waLink='',tgLink='';
 db.ref('channels').on('value',snap=>{
   const data=snap.val();
-  waLink=data?.whatsapp||'https://wa.me/';
+  waLink=data?.whatsapp||'https://wa.me/8801627234151';
   tgLink=data?.telegram||'https://t.me/';
   document.getElementById('waBtn').onclick=()=>window.open(waLink,'_blank');
   document.getElementById('tgBtn').onclick=()=>window.open(tgLink,'_blank');
@@ -193,7 +194,7 @@ function confirmOrder(){
   });
 
   // Send WhatsApp to your number 01627234151
-  const waUrl=`https://wa.me/880162721451?text=${encodeURIComponent(
+  const waUrl=`https://wa.me/8801627234151?text=${encodeURIComponent(
     `✅ Order Confirm\nName: ${name}\nCoin: ${selectedCoin}\nPrice: ${selectedPrice}\nPayment: ${payMethod}\nNumber: ${number}\nLast 4: ${last4}`
   )}`;
   window.open(waUrl,'_blank');
