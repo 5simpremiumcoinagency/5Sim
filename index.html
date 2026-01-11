@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5Sim Premium Coin Agency</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#2f3e46;display:flex;justify-content:center;padding:20px 0;color:#fff;}
+.container{width:360px;background:#3a4f57;border-radius:16px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.3);position:relative}
+h1{text-align:center;color:#7c8cff;margin-bottom:5px}
+.underline{width:60px;height:4px;background:#ff9f43;margin:0 auto 20px;border-radius:5px}
+.card{background:#5f757d;border-radius:14px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:relative;cursor:pointer;transition:.25s;box-shadow:0 0 8px rgba(124,140,255,.35),0 0 16px rgba(124,140,255,.18)}
+.card.selected{transform:scale(1.04);box-shadow:0 0 12px rgba(124,140,255,.9),0 0 28px rgba(124,140,255,.7);outline:2px solid #7c8cff}
+.coin{font-size:18px;font-weight:bold}
+.price strong{font-size:20px}
+.discount{position:absolute;top:-10px;right:12px;background:#f4c430;color:#000;font-size:12px;padding:4px 9px;border-radius:20px;font-weight:bold}
+.order-btn{margin:22px 0 18px;background:linear-gradient(45deg,#2ecc71,#1abc9c);border:none;width:100%;padding:15px;border-radius:30px;font-size:18px;font-weight:bold;color:#fff;cursor:pointer}
+.notice{background:#6b7f86;border-radius:16px;padding:18px;color:#fff;font-size:15px;line-height:1.6;text-align:center;margin-bottom:20px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.2)}
+.btn{width:100%;padding:16px;border-radius:40px;font-size:20px;font-weight:bold;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.whatsapp{background:linear-gradient(45deg,#25D366,#1ebe5d)}
+.telegram{background:linear-gradient(45deg,#0088cc,#006da3)}
+.order-history{margin-top:25px;background:#6b7f86;border-radius:18px;padding:22px;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.2)}
+.order-title{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:bold}
+.order-title i{color:#7c8cff;font-size:26px}
+.divider{height:2px;background:rgba(255,255,255,.25);margin:10px 0 18px}
+.empty-text{text-align:center;font-style:italic;opacity:.85}
+
+/* PAYMENT OVERLAY */
+#payOverlay{position:absolute;inset:0;background:#fff;border-radius:16px;display:none;overflow:auto}
+.pay-header{padding:16px;font-size:20px;font-weight:bold;border-bottom:1px solid #eee;text-align:center;color:#333;}
+.pay-wrap{padding:16px;color:#333;}
+.pay-input{width:100%;padding:14px;border-radius:12px;border:1px solid #ddd;margin:8px 0 16px;font-size:16px;}
+.pay-note{background:#efeaff;border-left:6px solid #6c63ff;padding:12px;border-radius:10px;margin:16px 0;font-size:14px;line-height:1.5;}
+.method{border:1px solid #e6e6e6;border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;margin:12px 0;cursor:pointer;transition:all 0.3s;}
+.method.selected{border-color:#6c63ff;background:#f3f1ff;box-shadow:0 4px 12px rgba(108, 99, 255, 0.2);}
+.mlogo{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;color:white;flex-shrink:0;}
+.method-info{flex:1;}
+.method-info b{display:block;font-size:18px;margin-bottom:4px;}
+.method-info small{font-size:12px;color:#666;line-height:1.4;}
+.pay-bottom{position:sticky;bottom:0;background:#fff;padding:12px;display:flex;gap:10px;border-top:1px solid #eee;}
+.cancel{flex:1;background:#ff5c5c;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;cursor:pointer;}
+.confirm{flex:1;background:#6c63ff;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;cursor:pointer;}
+.bkash-logo-bg{background:linear-gradient(135deg, #e2136e 0%, #c10a5a 100%);}
+.nagad-logo-bg{background:linear-gradient(135deg, #e30b17 0%, #c00a13 100%);}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>5Sim Premium<br>Coin Agency</h1>
+<div class="underline"></div>
+
+<div id="coinContainer"></div>
+
+<button class="order-btn" onclick="openPay()">Order Now</button>
+<div class="notice">কয়েন ক্রয় করতে উপরের <strong>ORDER NOW</strong>অপশন-এ ক্লিক করুন। দ্রুত সেবা পেতে আমাদের সাথে সরাসরি যোগাযোগ করুন।।</div>
+
+<button class="btn whatsapp" id="waBtn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+<button class="btn telegram" id="tgBtn"><i class="fa-brands fa-telegram"></i> Telegram</button>
+
+<div class="order-history">
+  <div class="order-title"><i class="fa-solid fa-clock-rotate-left"></i> Order History</div>
+  <div class="divider"></div>
+  <div class="empty-text" id="history">No orders yet. Your orders will appear here.</div>
+</div>
+</div>
+
+<!-- Payment Overlay -->
+<div id="payOverlay">
+<div class="pay-header">Place Your Order</div>
+<div class="pay-wrap">
+<label>Your Name:</label>
+<input id="pname" class="pay-input" placeholder="Enter full name">
+<div class="pay-note">বিকাশ / নগদ পেমেন্ট করুন এবং তারপর Confirm করুন</div>
+<b>Select Payment Method:</b>
+<div class="method" data="Bkash">
+  <div class="mlogo bkash-logo-bg">bKash</div>
+  <div class="method-info">
+    <b>Bkash</b>
+    <div id="bkashNumber" style="color:#6c63ff;font-weight:600;margin:4px 0;">+8801627234151</div>
+    <small>যেই নাম্বার থেক ে টাকা পাঠিয়েছেন সেই নাম্বারের লাস ্ ট চার সংখ্যা দিন</small>
+  </div>
+</div>
+<div class="method" data="Nagad">
+  <div class="mlogo nagad-logo-bg">nagad</div>
+  <div class="method-info">
+    <b>Nagad</b>
+    <div id="nagadNumber" style="color:#6c63ff;font-weight:600;margin:4px 0;">+88001627234151</div>
+    <small>যেই নাম্বার থেক ে টাকা পাঠিয়েছেন সেই নাম্বারের লাস ্ ট চার সংখ্যা দিন</small>
+  </div>
+</div>
+<label>Last 4 Digits:</label>
+<input id="last4" class="pay-input" placeholder="Last 4 digits" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+</div>
+<div class="pay-bottom">
+<button class="cancel" onclick="closePay()">Cancel</button>
+<button class="confirm" onclick="confirmOrder()">Confirm Order</button>
+</div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDavJTBVYN2Tu4shoNAvJHqNTnek8X95R8",
+  authDomain: "sim-17d6a.firebaseapp.com",
+  databaseURL: "https://sim-17d6a-default-rtdb.firebaseio.com",
+  projectId: "sim-17d6a",
+  storageBucket: "sim-17d6a.appspot.com",
+  messagingSenderId: "108146630674",
+  appId: "1:108146630674:android:7473f53e8c6c9eb7a5f8cb"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+
+// Load coins
+const coinContainer=document.getElementById('coinContainer');
+let selectedCoin="",selectedPrice="",payMethod="";
+
+function loadCoins(){
+  coinContainer.innerHTML='';
+  db.ref('coins').on('value',snap=>{
+    coinContainer.innerHTML='';
+    snap.forEach(c=>{
+      const data=c.val();
+      const div=document.createElement('div');
+      div.className='card';
+      div.innerHTML=`<div class="coin">${data.name}</div><div class="price"><strong>${data.price}</strong></div><div class="discount">${data.discount}% OFF</div>`;
+      div.onclick=()=>{
+        document.querySelectorAll('.card').forEach(x=>x.classList.remove('selected'));
+        div.classList.add('selected');
+        selectedCoin=data.name;
+        selectedPrice=data.price;
+      };
+      coinContainer.appendChild(div);
+    });
+  });
+}
+
+// Load payment numbers
+db.ref('paymentNumbers').on('value',snap=>{
+  const data=snap.val();
+  document.getElementById('bkashNumber').innerText=data?.bkash||'+8801716698995';
+  document.getElementById('nagadNumber').innerText=data?.nagad||'+8801836951009';
+});
+
+// Load channels
+let waLink='',tgLink='';
+db.ref('channels').on('value',snap=>{
+  const data=snap.val();
+  waLink=data?.whatsapp||'https://wa.me/';
+  tgLink=data?.telegram||'https://t.me/';
+  document.getElementById('waBtn').onclick=()=>window.open(waLink,'_blank');
+  document.getElementById('tgBtn').onclick=()=>window.open(tgLink,'_blank');
+});
+
+loadCoins();
+
+// Payment overlay functions
+function openPay(){
+  if(!selectedCoin){alert("Select a coin");return;}
+  document.getElementById('payOverlay').style.display='block';
+}
+function closePay(){document.getElementById('payOverlay').style.display='none';}
+document.querySelectorAll('.method').forEach(m=>{
+  m.onclick=()=>{
+    document.querySelectorAll('.method').forEach(x=>x.classList.remove('selected'));
+    m.classList.add('selected');
+    payMethod=m.getAttribute('data');
+  };
+});
+
+function confirmOrder(){
+  const name=document.getElementById('pname').value.trim();
+  const last4=document.getElementById('last4').value.trim();
+  if(!name){alert("Enter name");return;}
+  if(!payMethod){alert("Select payment method");return;}
+  if(last4.length!==4){alert("Last 4 digits required");return;}
+  let number=(payMethod==='Bkash')?document.getElementById('bkashNumber').innerText:document.getElementById('nagadNumber').innerText;
+  
+  // Save order in Firebase
+  const newOrderRef=db.ref('orders').push();
+  newOrderRef.set({
+    name,
+    coin:selectedCoin,
+    price:selectedPrice,
+    payment:payMethod,
+    number,
+    last4,
+    timestamp:Date.now()
+  });
+
+  // Send WhatsApp to your number 01627234151
+  const waUrl=`https://wa.me/880162721451?text=${encodeURIComponent(
+    `✅ Order Confirm\nName: ${name}\nCoin: ${selectedCoin}\nPrice: ${selectedPrice}\nPayment: ${payMethod}\nNumber: ${number}\nLast 4: ${last4}`
+  )}`;
+  window.open(waUrl,'_blank');
+
+  alert("Order confirmed! You will be contacted soon.");
+  document.getElementById('pname').value='';
+  document.getElementById('last4').value='';
+  document.querySelectorAll('.method').forEach(x=>x.classList.remove('selected'));
+  payMethod=''; closePay();
+}
+</script>
+</body>
+  </html>
