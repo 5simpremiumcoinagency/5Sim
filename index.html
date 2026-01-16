@@ -25,9 +25,18 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
 .order-title i{color:#7c8cff;font-size:26px}
 .divider{height:2px;background:rgba(255,255,255,.25);margin:10px 0 18px}
 .empty-text{text-align:center;font-style:italic;opacity:.85}
-
-/* PAYMENT OVERLAY */
-#payOverlay{position:absolute;inset:0;background:#fff;border-radius:16px;display:none;overflow:auto}
+/* YouTube */
+.youtube-section{margin-top:25px;background:#020617;border-radius:18px;padding:15px;box-shadow:0 8px 25px rgba(0,0,0,0.4);}
+.section-title{font-size:18px;font-weight:bold;display:flex;align-items:center;gap:8px;color:#ff0000}
+.yt-carousel{width:100%;display:flex;justify-content:center;align-items:center;overflow:hidden;touch-action:pan-y;}
+.yt-carousel img{width:90%;max-width:340px;border-radius:18px;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,0.6);transition:transform 0.3s ease;}
+.yt-carousel img:active{transform:scale(0.97)}
+/* Payment Overlay */
+#payOverlay{
+    position:fixed; inset:0; display:none; overflow:auto;
+    background:#fff; z-index:999;
+    opacity:0; transition: opacity 0.8s ease;
+}
 .pay-header{padding:16px;font-size:20px;font-weight:bold;border-bottom:1px solid #eee;text-align:center;color:#333;}
 .pay-wrap{padding:16px;color:#333;}
 .pay-input{width:100%;padding:14px;border-radius:12px;border:1px solid #ddd;margin:8px 0 16px;font-size:16px;}
@@ -43,27 +52,66 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
 .confirm{flex:1;background:#6c63ff;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;cursor:pointer;}
 .bkash-logo-bg{background:linear-gradient(135deg, #e2136e 0%, #c10a5a 100%);}
 .nagad-logo-bg{background:linear-gradient(135deg, #e30b17 0%, #c00a13 100%);}
+
+/* Loader */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#loader.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #6c63ff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>5Sim Premium<br>Coin Agency</h1>
 <div class="underline"></div>
-
 <div id="coinContainer"></div>
-
 <button class="order-btn" onclick="openPay()">Order Now</button>
-<div class="notice">কয়েন ক্রয় করতে উপরের <strong>ORDER NOW</strong> অপশন-এ ক্লিক করুন। দ্রুত সেবা পেতে আমাদের সাথে সরাসরি যোগাযোগ করুন।</div>
 
+<div class="notice">কয়েন ক্রয় করতে উপরের <strong>ORDER NOW</strong> ক্লিক করুন। দ্রুত সেবা পেতে আমাদের সাথে সরাসরি যোগাযোগ করুন।</div>
 <button class="btn whatsapp" id="waBtn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
 <button class="btn telegram" id="tgBtn"><i class="fa-brands fa-telegram"></i> Telegram</button>
 
 <div class="order-history">
   <div class="order-title"><i class="fa-solid fa-clock-rotate-left"></i> Order History</div>
   <div class="divider"></div>
-  <div class="empty-text" id="history">No orders yet. Your orders will appear here.</div>
+  <div id="history" class="empty-text">No orders yet. Your orders will appear here.</div>
+</div>
+
+<div class="youtube-section">
+  <div class="section-title">
+    <i class="fa-brands fa-youtube"></i> YouTube Videos
+  </div>
+  <div class="divider"></div>
+  <div id="ytCarousel" class="yt-carousel"></div>
 </div>
 </div>
+
+<!-- Loader -->
+<div id="loader"><div class="spinner"></div></div>
 
 <!-- Payment Overlay -->
 <div id="payOverlay">
@@ -71,10 +119,10 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
 <div class="pay-wrap">
 <label>Your Name:</label>
 <input id="pname" class="pay-input" placeholder="Enter full name">
-<div class="pay-note">অনুগ্রহ করে আগে বিকাশ অথবা নগদে আমাদের দেওয়া নাম্বারে সেন্ড মানি করুন।  
+<div class="pay-note">অনুগ্রহ করে আগে বিকাশ অথবা নগদে আমাদের দেওয়া নাম্বারে সেন্ড মানি করুন।    
 পেমেন্ট সম্পন্ন হলে আপনার নাম ও যে নাম্বার থেকে টাকা পাঠিয়েছেন সেই নাম্বারের শেষ ৪ সংখ্যা দিয়ে অর্ডার কনফার্ম করুন।</div>
-
 <b>Select Payment Method:</b>
+
 <div class="method" data="Bkash">
   <div class="mlogo bkash-logo-bg">bKash</div>
   <div class="method-info">
@@ -100,71 +148,97 @@ h1{text-align:center;color:#7c8cff;margin-bottom:5px}
 </div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDavJTBVYN2Tu4shoNAvJHqNTnek8X95R8",
-  authDomain: "sim-17d6a.firebaseapp.com",
-  databaseURL: "https://sim-17d6a-default-rtdb.firebaseio.com",
-  projectId: "sim-17d6a",
-  storageBucket: "sim-17d6a.appspot.com",
-  messagingSenderId: "108146630674",
-  appId: "1:108146630674:android:7473f53e8c6c9eb7a5f8cb"
-};
+// Firebase Initialization
+const firebaseConfig = { apiKey:"AIzaSyDavJTBVYN2Tu4shoNAvJHqNTnek8X95R8", databaseURL:"https://sim-17d6a-default-rtdb.firebaseio.com"};
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-// Load coins
+// Coins
 const coinContainer=document.getElementById('coinContainer');
 let selectedCoin="",selectedPrice="",payMethod="";
-
-function loadCoins(){
+db.ref('coins').on('value',snap=>{
   coinContainer.innerHTML='';
-  db.ref('coins').on('value',snap=>{
-    coinContainer.innerHTML='';
-    snap.forEach(c=>{
-      const data=c.val();
-      const div=document.createElement('div');
-      div.className='card';
-      div.innerHTML=`<div class="coin">${data.name}</div><div class="price"><strong>${data.price}</strong></div><div class="discount">${data.discount}% OFF</div>`;
-      div.onclick=()=>{
-        document.querySelectorAll('.card').forEach(x=>x.classList.remove('selected'));
-        div.classList.add('selected');
-        selectedCoin=data.name;
-        selectedPrice=data.price;
-      };
-      coinContainer.appendChild(div);
-    });
+  snap.forEach(c=>{
+    const data=c.val();
+    const div=document.createElement('div');
+    div.className='card';
+    div.innerHTML=`<div class="coin">${data.name}</div><div class="price"><strong>${data.price}</strong></div><div class="discount">${data.discount}% OFF</div>`;
+    div.onclick=()=>{
+      document.querySelectorAll('.card').forEach(x=>x.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedCoin=data.name;
+      selectedPrice=data.price;
+    };
+    coinContainer.appendChild(div);
   });
-}
+});
 
-// Load payment numbers
+// Payment numbers
 db.ref('paymentNumbers').on('value',snap=>{
   const data=snap.val();
   document.getElementById('bkashNumber').innerText=data?.bkash||'+8801627234151';
   document.getElementById('nagadNumber').innerText=data?.nagad||'+8801627234151';
 });
 
-// Load channels
+// Channels
 let waLink='',tgLink='';
 db.ref('channels').on('value',snap=>{
-  const data=snap.val();
-  waLink=data?.whatsapp||'https://wa.me/8801627234151';
-  tgLink=data?.telegram||'https://t.me/';
+  const data=snap.val()||{};
+  waLink=data.whatsapp||'https://wa.me/8801627234151';
+  tgLink=data.telegram||'https://t.me/';
   document.getElementById('waBtn').onclick=()=>window.open(waLink,'_blank');
   document.getElementById('tgBtn').onclick=()=>window.open(tgLink,'_blank');
 });
 
-loadCoins();
-
-// Payment overlay functions
-function openPay(){
-  if(!selectedCoin){alert("Select a coin");return;}
-  document.getElementById('payOverlay').style.display='block';
+// Orders History
+const historyDiv=document.getElementById('history');
+const THREE_HOURS = 3 * 60 * 60 * 1000;
+function updateHistory(){
+  db.ref('orders').once('value',snap=>{
+    const orders = snap.val();
+    const now = Date.now();
+    historyDiv.innerHTML = '';
+    if(!orders){historyDiv.innerHTML='No orders yet.'; return;}
+    Object.entries(orders).forEach(([key,o])=>{
+      if(now - o.timestamp > THREE_HOURS){ db.ref('orders/'+key).remove(); }
+    });
+    db.ref('orders').once('value',snap2=>{
+      const remaining = snap2.val();
+      if(!remaining){historyDiv.innerHTML='No orders in the last 3 hours.'; return;}
+      Object.values(remaining).reverse().forEach(o=>{
+        const div=document.createElement('div');
+        div.style.marginBottom='12px';
+        div.innerHTML=`<b>${o.name}</b> - ${o.coin} - ${o.price} - ${o.payment} - <i>${new Date(o.timestamp).toLocaleString()}</i>`;
+        historyDiv.appendChild(div);
+      });
+    });
+  });
 }
-function closePay(){document.getElementById('payOverlay').style.display='none';}
+updateHistory();
+setInterval(updateHistory, 10000);
+
+// Payment Overlay with Loading
+function openPay() {
+    if(!selectedCoin){ alert("Select a coin"); return; }
+    const loader = document.getElementById('loader');
+    const overlay = document.getElementById('payOverlay');
+
+    loader.classList.add('show'); // show loader
+
+    setTimeout(() => {
+        loader.classList.remove('show'); // hide loader
+        overlay.style.display = 'block';
+        overlay.style.opacity = 0;
+        overlay.style.transition = 'opacity 0.5s ease';
+        requestAnimationFrame(()=>{ overlay.style.opacity = 1; });
+    }, 2000);
+}
+
+function closePay(){ document.getElementById('payOverlay').style.display='none'; }
+
 document.querySelectorAll('.method').forEach(m=>{
   m.onclick=()=>{
     document.querySelectorAll('.method').forEach(x=>x.classList.remove('selected'));
@@ -173,38 +247,57 @@ document.querySelectorAll('.method').forEach(m=>{
   };
 });
 
+// Confirm Order
 function confirmOrder(){
   const name=document.getElementById('pname').value.trim();
   const last4=document.getElementById('last4').value.trim();
   if(!name){alert("Enter name");return;}
   if(!payMethod){alert("Select payment method");return;}
   if(last4.length!==4){alert("Last 4 digits required");return;}
-  let number=(payMethod==='Bkash')?document.getElementById('bkashNumber').innerText:document.getElementById('nagadNumber').innerText;
-  
-  // Save order in Firebase
-  const newOrderRef=db.ref('orders').push();
-  newOrderRef.set({
-    name,
-    coin:selectedCoin,
-    price:selectedPrice,
-    payment:payMethod,
-    number,
-    last4,
-    timestamp:Date.now()
+  const number=(payMethod==='Bkash')?document.getElementById('bkashNumber').innerText:document.getElementById('nagadNumber').innerText;
+
+  db.ref('orders').push({
+    name, coin:selectedCoin, price:selectedPrice, payment:payMethod, number, last4, timestamp:Date.now()
   });
 
-  // Send WhatsApp to your number 01627234151
   const waUrl=`https://wa.me/8801627234151?text=${encodeURIComponent(
     `✅ Order Confirm\nName: ${name}\nCoin: ${selectedCoin}\nPrice: ${selectedPrice}\nPayment: ${payMethod}\nNumber: ${number}\nLast 4: ${last4}`
   )}`;
-  window.open(waUrl,'_blank');
+  window.location.href = waUrl;
 
-  alert("Order confirmed! You will be contacted soon.");
   document.getElementById('pname').value='';
   document.getElementById('last4').value='';
   document.querySelectorAll('.method').forEach(x=>x.classList.remove('selected'));
   payMethod=''; closePay();
 }
+
+// YouTube Videos
+const ytCarousel=document.getElementById('ytCarousel');
+let current=0;
+let startX=0;
+db.ref('youtubeVideos').on('value',snap=>{
+  const videos = Object.values(snap.val()||[]);
+  function showVideo(i){
+    ytCarousel.innerHTML='';
+    if(!videos.length) return;
+    const v=videos[i];
+    const img=document.createElement('img');
+    img.src=v.thumb;
+    img.alt=v.title;
+    img.title=v.title;
+    img.onclick=()=>window.open(v.link,'_blank');
+    ytCarousel.appendChild(img);
+  }
+  showVideo(current);
+  setInterval(()=>{current=(current+1)%videos.length;showVideo(current);},3000);
+  ytCarousel.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+  ytCarousel.addEventListener('touchend',e=>{
+    const endX=e.changedTouches[0].clientX;
+    if(startX-endX>50) current=(current+1)%videos.length;
+    if(endX-startX>50) current=(current-1+videos.length)%videos.length;
+    showVideo(current);
+  });
+});
 </script>
 </body>
 </html>
